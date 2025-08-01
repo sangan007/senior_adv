@@ -1,13 +1,17 @@
-from flask import Flask, request, jsonify
-import speech_recognition as sr
-import google.generativeai as genai
 import os
 import json
 import datetime
+from flask import Flask, request, jsonify
+import speech_recognition as sr
+import google.generativeai as genai
 
 app = Flask(__name__)
 
-GEMINI_API_KEY = "GEMINI_API_KEY"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY environment variable not set. Please set it on Render or locally.")
+
 genai.configure(api_key=GEMINI_API_KEY)
 
 model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
@@ -45,7 +49,7 @@ def process_voice_command():
         prompt = f"""
         Analyze the following Malayalam voice command and extract the user's intent.
         Provide the output in JSON format.
-        
+
         Expected JSON structure:
         {{
           "action": "set_reminder" | "query_reminder" | "delete_reminder" | "book_trip" | "get_tip" | "unknown",
@@ -62,7 +66,7 @@ def process_voice_command():
 
         Voice Command: '{text_command}'
         """
-        
+
         generation_config = {
             "response_mime_type": "application/json",
             "response_schema": {
@@ -82,7 +86,7 @@ def process_voice_command():
             [prompt],
             generation_config=generation_config
         )
-        
+
         gemini_output = json.loads(response.text)
         print(f"Gemini Output: {gemini_output}")
 
