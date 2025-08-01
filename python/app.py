@@ -7,7 +7,7 @@ import datetime
 
 app = Flask(__name__)
 
-GEMINI_API_KEY = "AIzaSyBE44Y5GcYy5MROKkZ0fzcKXM3zYuSwID4"
+GEMINI_API_KEY = ""
 genai.configure(api_key=GEMINI_API_KEY)
 
 model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
